@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Lean Bulk Tracker</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#f1f5f9;font-family:Arial,sans-serif;line-height:1.6}
+main{max-width:850px;margin:auto;padding:20px}
+h1{font-size:32px;margin-bottom:5px}
+h2{font-size:21px;color:#8ce0b0}
+p{color:#bdc8d9}
+.card{background:#142137;padding:18px;border-radius:16px;margin:18px 0;border:1px solid #293750}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#1c2c45;padding:15px;border-radius:12px}
+.stat strong{font-size:23px;display:block;color:#8ce0b0}
+label{display:block;margin:10px 0 5px;color:#bdc8d9}
+input{width:100%;padding:12px;border-radius:8px;border:1px solid #41516b;background:#0b1220;color:white;font-size:16px}
+button{padding:12px 16px;background:#8ce0b0;color:#102019;border:0;border-radius:9px;font-weight:bold;font-size:15px;margin-top:12px;cursor:pointer}
+.secondary{background:#34445e;color:white}
+.meal{padding:12px 0;border-bottom:1px solid #34445e}
+.meal:last-child{border-bottom:0}
+.check{display:flex;gap:10px;align-items:center}
+.check input{width:auto}
+.progress{height:10px;background:#34445e;border-radius:20px;overflow:hidden;margin:8px 0}
+.bar{height:100%;width:0;background:#8ce0b0}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+td,th{text-align:left;padding:8px;border-bottom:1px solid #34445e}
+.small{font-size:13px;color:#aab8ca}
+@media(max-width:480px){main{padding:13px}.card{padding:14px}h1{font-size:27px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<p style="color:#8ce0b0;font-weight:bold">PERSONAL FITNESS DASHBOARD</p>
+<h1>Lean Bulk Tracker 💪</h1>
+<p>My journey from 62 kg to 70 kg</p>
+</header>
+
+<section class="stats">
+<div class="stat">Current Weight<strong id="current">62 kg</strong></div>
+<div class="stat">Goal Weight<strong>70 kg</strong></div>
+<div class="stat">Calories / Day<strong>2400 kcal</strong></div>
+<div class="stat">Protein / Day<strong>130 g</strong></div>
+</section>
+
+<section class="card">
+<h2>🍳 My Three-Meal Diet</h2>
+<p class="small">Nutrition figures are estimates. Adjust portions to meet your targets.</p>
+
+<div class="meal">
+<h3>1. Breakfast — approximately 750 kcal</h3>
+<p>• 3 whole eggs<br>
+• 80 g oats cooked with 300 ml milk<br>
+• 1 banana<br>
+• 15 g peanuts</p>
+<label class="check"><input type="checkbox" class="mealcheck"> Breakfast completed</label>
+</div>
+
+<div class="meal">
+<h3>2. Lunch — approximately 800 kcal</h3>
+<p>• 3 chapatis<br>
+• 2 whole eggs<br>
+• 1 bowl dal<br>
+• 150 g curd<br>
+• 1 serving vegetables</p>
+<label class="check"><input type="checkbox" class="mealcheck"> Lunch completed</label>
+</div>
+
+<div class="meal">
+<h3>3. Dinner — approximately 800 kcal</h3>
+<p><b>Non-vegetarian:</b> 150 g cooked chicken or fish, rice or chapatis, vegetables and curd.</p>
+<p><b>Vegetarian:</b> 150–200 g tofu or paneer, rice, vegetables and curd.</p>
+<label class="check"><input type="checkbox" class="mealcheck"> Dinner completed</label>
+</div>
+</section>
+
+<section class="card">
+<h2>📊 Daily Nutrition Tracker</h2>
+<label for="date">Date</label>
+<input type="date" id="date">
+
+<label for="calories">Calories consumed (kcal)</label>
+<input type="number" id="calories" min="0" placeholder="e.g. 2400">
+
+<label for="protein">Protein consumed (g)</label>
+<input type="number" id="protein" min="0" placeholder="e.g. 130">
+
+<label for="water">Water consumed (litres)</label>
+<input type="number" id="water" min="0" step="0.1" placeholder="e.g. 2.5">
+
+<button onclick="saveDay()">Save Today's Log</button>
+<button class="secondary" onclick="exportData()">Export CSV</button>
+
+<h3>Calories</h3>
+<p id="calLabel">0 / 2400 kcal</p>
+<div class="progress"><div class="bar" id="calBar"></div></div>
+
+<h3>Protein</h3>
+<p id="proLabel">0 / 130 g</p>
+<div class="progress"><div class="bar" id="proBar"></div></div>
+<p id="message" class="small">Your saved daily totals will appear here.</p>
+</section>
+
+<section class="card">
+<h2>⚖️ Weight Progress</h2>
+<label for="weightDate">Date</label>
+<input type="date" id="weightDate">
+
+<label for="weight">Morning weight (kg)</label>
+<input type="number" id="weight" min="30" max="250" step="0.1" placeholder="e.g. 62.0">
+
+<button onclick="saveWeight()">Save Weight</button>
+
+<table>
+<thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead>
+<tbody id="weightRows"></tbody>
+</table>
+</section>
+
+<section class="card">
+<h2>🎯 My Weekly Rules</h2>
+<p>1. Weigh yourself in the morning under similar conditions.</p>
+<p>2. Compare weekly average weights, not just one day.</p>
+<p>3. If your weight doesn't increase for two weeks, add 100–150 kcal daily.</p>
+<p>4. If you gain weight too quickly for multiple weeks, consider reducing 100–150 kcal.</p>
+<p>5. Train consistently and aim for 7–9 hours of sleep.</p>
+<p>6. Aim for approximately 1.6–2.2 g protein per kg of body weight daily.</p>
+<p class="small">2400 kcal is a starting estimate, not a measured requirement. Adjust based on your actual progress.</p>
+</section>
+
+<footer class="small">
+Data is stored in this browser on this device. Export your records regularly. Clearing browser data may erase saved logs.
+</footer>
+</main>
+
+<script>
+function today(){
+  const d=new Date();
+  d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+  return d.toISOString().slice(0,10);
+}
+document.getElementById("date").value=today();
+document.getElementById("weightDate").value=today();
+
+function read(key){
+  try{return JSON.parse(localStorage.getItem(key))||[]}
+  catch(e){return []}
+}
+function write(key,data){
+  localStorage.setItem(key,JSON.stringify(data));
+}
+
+let days=read("bulkDays");
+let weights=read("bulkWeights");
+
+function saveDay(){
+  const date=document.getElementById("date").value;
+  const calories=Number(document.getElementById("calories").value);
+  const protein=Number(document.getElementById("protein").value);
+  const water=Number(document.getElementById("water").value);
+
+  if(!date || document.getElementById("calories").value==="" ||
+     document.getElementById("protein").value===""){
+    alert("Enter the date, calories and protein.");
+    return;
+  }
+
+  days=days.filter(x=>x.date!==date);
+  days.push({date,calories,protein,water});
+  days.sort((a,b)=>a.date.localeCompare(b.date));
+  write("bulkDays",days);
+  updateProgress(calories,protein);
+  document.getElementById("message").textContent="Daily log saved successfully.";
+}
+
+function updateProgress(calories,protein){
+  document.getElementById("calLabel").textContent=calories+" / 2400 kcal";
+  document.getElementById("proLabel").textContent=protein+" / 130 g";
+  document.getElementById("calBar").style.width=Math.min(100,calories/2400*100)+"%";
+  document.getElementById("proBar").style.width=Math.min(100,protein/130*100)+"%";
+}
+
+function saveWeight(){
+  const date=document.getElementById("weightDate").value;
+  const value=document.getElementById("weight").value;
+  const weight=Number(value);
+
+  if(!date || value==="" || weight<30 || weight>250){
+    alert("Enter a valid date and weight.");
+    return;
+  }
+
+  weights=weights.filter(x=>x.date!==date);
+  weights.push({date,weight});
+  weights.sort((a,b)=>a.date.localeCompare(b.date));
+  write("bulkWeights",weights);
+  document.getElementById("weight").value="";
+  renderWeights();
+}
+
+function renderWeights(){
+  const tbody=document.getElementById("weightRows");
+  tbody.innerHTML="";
+  if(!weights.length){
+    tbody.innerHTML="<tr><td colspan='3'>No weight records yet.</td></tr>";
+    document.getElementById("current").textContent="62 kg";
+    return;
+  }
+
+  const first=weights[0].weight;
+  weights.slice().reverse().forEach(x=>{
+    const tr=document.createElement("tr");
+    const change=x.weight-first;
+    const td1=document.createElement("td");
+    const td2=document.createElement("td");
+    const td3=document.createElement("td");
+    td1.textContent=x.date;
+    td2.textContent=x.weight.toFixed(1)+" kg";
+    td3.textContent=(change>0?"+":"")+change.toFixed(1)+" kg";
+    tr.append(td1,td2,td3);
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("current").textContent=
+    weights[weights.length-1].weight.toFixed(1)+" kg";
+}
+
+function exportData(){
+  const rows=[["Date","Calories kcal","Protein g","Water litres"]];
+  days.forEach(x=>rows.push([x.date,x.calories,x.protein,x.water]));
+  const csv=rows.map(row=>row.map(v=>
+    '"'+String(v??"").replace(/"/g,'""')+'"'
+  ).join(",")).join("\r\n");
+
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="my-lean-bulk-log.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.querySelectorAll(".mealcheck").forEach((box,i)=>{
+  box.checked=localStorage.getItem("meal_"+today()+"_"+i)==="true";
+  box.addEventListener("change",()=>{
+    localStorage.setItem("meal_"+today()+"_"+i,box.checked);
+  });
+});
+
+const existing=days.find(x=>x.date===today());
+if(existing){
+  document.getElementById("calories").value=existing.calories;
+  document.getElementById("protein").value=existing.protein;
+  document.getElementById("water").value=existing.water??"";
+  updateProgress(existing.calories,existing.protein);
+}
+renderWeights();
+</script>
+</body>
+</html>
